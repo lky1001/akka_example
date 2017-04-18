@@ -3,12 +3,34 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes  'Title': 'Akka Example', 'Version': version, 'Main-Class': 'com.tistory.lky1001.akkaexample.Application'
+    }
+    dependsOn configurations.runtime
+    from {
+        configurations.compile.collect {it.isDirectory()? it: zipTree(it)}
+    }
+}
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://repo.akka.io/snapshots/"
+    }
 }
 
+tasks.withType(ScalaCompile) {
+    ScalaCompileOptions.useAnt = false
+}
+
+
+
 dependencies {
+    compile 'com.typesafe.akka:akka-actor_2.11:2.5.0'
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
